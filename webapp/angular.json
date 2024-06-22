@@ -25,7 +25,8 @@
             ],
             "scripts": [],
             "allowedCommonJsDependencies": [
-              "lodash"
+              "lodash",
+              "file-saver"
             ]
           },
           "configurations": {
@@ -116,6 +117,5 @@
         }
       }
     }
-  },
-  "defaultProject": "traduora-webapp"
+  }
 }

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
@@ -29,7 +29,7 @@ export class ProjectSettingsComponent implements OnInit, OnDestroy {
 
   sub: Subscription;
 
-  constructor(private fb: FormBuilder, private store: Store, private route: ActivatedRoute) {}
+  constructor(private fb: UntypedFormBuilder, private store: Store, private route: ActivatedRoute) {}
 
   ngOnInit() {
     this.store.dispatch(new ReloadCurrentProject());

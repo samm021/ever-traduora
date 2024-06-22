@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -27,7 +27,7 @@ export class NewProjectComponent implements OnInit, OnDestroy {
 
   modal: NgbModalRef | undefined;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private store: Store) {}
+  constructor(private modalService: NgbModal, private fb: UntypedFormBuilder, private store: Store) {}
 
   ngOnInit() {}
 
