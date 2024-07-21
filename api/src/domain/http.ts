@@ -221,6 +221,13 @@ export class TermTranslationDTO {
   date: AccessDatesDTO;
 }
 
+export class TermTranslationJsonDTO {
+  @ApiProperty()
+  term: string;
+  @ApiProperty()
+  value: string;
+}
+
 export class ProjectClientDTO {
   @ApiProperty()
   id: string;
@@ -310,6 +317,12 @@ export class ListTermTranslatonsResponse extends ServiceApiResponse<TermTranslat
   @ApiProperty({ type: TermTranslationDTO, isArray: true })
   data: TermTranslationDTO[];
 }
+
+export class ListTermTranslationJsonResponse extends ServiceApiResponse<TermTranslationJsonDTO[]> {
+  @ApiProperty({ type: TermTranslationJsonDTO, isArray: true })
+  data: TermTranslationJsonDTO[];
+}
+
 
 export class TermTranslatonResponse extends ServiceApiResponse<TermTranslationDTO> {
   @ApiProperty()

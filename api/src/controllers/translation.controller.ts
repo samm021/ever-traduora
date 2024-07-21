@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOAuth2, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import { ProjectAction } from '../domain/actions';
 import {
   AddLocaleRequest,
   ListProjectLocalesResponse,
+  ListTermTranslationJsonResponse,
   ListTermTranslatonsResponse,
   ProjectLocaleResponse,
   TermTranslatonResponse,
@@ -240,5 +241,42 @@ export default class TranslationController {
       await entityManager.remove(projectLocale);
       await entityManager.decrement(Project, { id: membership.project.id }, 'localesCount', 1);
     });
+  }
+
+  @Get(':localeCode/json')
+  @ApiOperation({ summary: `List translations as json KV pair` })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: ListTermTranslationJsonResponse })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Project not found' })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
+  async getJSON(@Req() req, @Param('projectId') projectId: string, @Param('localeCode') localeCode: string) {
+    const user = this.auth.getRequestUserOrClient(req);
+    const membership = await this.auth.authorizeProjectAction(user, projectId, ProjectAction.ViewTranslation);
+    try {
+      const projectLocale = await this.projectLocaleRepo.findOneOrFail({
+        where: {
+          project: membership.project,
+          locale: {
+            code: localeCode,
+          },
+        },
+      });
+
+      try {
+        const translations = await this.translationRepo.find({
+          where: {
+            projectLocale,
+          },
+          relations: ['term'],
+        });
+
+        const result = translations.map(t => ({ term: t.term.value, value: t.value }));
+        return { data: result };
+      } catch (error) {
+        throw new NotFoundException('project translation not found');
+      }
+    } catch (error) {
+      throw new NotFoundException('project locale not found');
+    }
   }
 }
